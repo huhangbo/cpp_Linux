@@ -22,7 +22,7 @@ int main() {
         char buf[1024] = {0};
         while (true) {
             int len = read(pipefd[0], buf, sizeof(buf));
-            printf("len: %d\n", len);
+            printf("len: %d", len);
             printf("parent receive : %s, pid: %d\n", buf, getpid());
             memset(buf, 0, 1024);
             sleep(1);
