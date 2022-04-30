@@ -15,7 +15,7 @@ sockInfo sockInfos[128];
 
 
 void* working(void* arg) {
-    sockInfo* pInfo = (sockInfo* )arg;
+    auto* pInfo = (sockInfo* )arg;
     char clientIP[16];
     inet_ntop(AF_INET, &pInfo->addr.sin_addr.s_addr, clientIP, sizeof(pInfo->addr));
     unsigned short clientPort = ntohs(pInfo->addr.sin_port);
@@ -35,7 +35,7 @@ void* working(void* arg) {
         write(pInfo->fd, recvBuf, strlen(recvBuf)+1);
     }
     close(pInfo->fd);
-    return NULL;
+    return nullptr;
 }
 
 int main() {
@@ -77,7 +77,7 @@ int main() {
             exit(-1);
         }
         sockInfo* pInfo;
-        for (int i = 0; i < max; ++i) {
+        for (int i = 0; ; ++i) {
             if(sockInfos[i].fd == -1) {
                 pInfo = &sockInfos[i];
                 break;

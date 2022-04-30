@@ -1,11 +1,11 @@
-#include <stdio.h>
+#include <cstdio>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 #include <sys/epoll.h>
 #include <fcntl.h>
-#include <errno.h>
+#include <cerrno>
 
 int main() {
     int lfd = socket(PF_INET, SOCK_STREAM, 0);
@@ -36,8 +36,9 @@ int main() {
     epollEvent.events = EPOLLIN;
     epollEvent.data.fd = lfd;
 
-    epoll_event epollEvents[1024];
+    epoll_ctl(epollFd, EPOLL_CTL_ADD, lfd, &epollEvent);
 
+    epoll_event epollEvents[1024];
 
     while (true) {
         int epollRet = epoll_wait(epollFd, epollEvents, 1024, -1);
@@ -45,7 +46,7 @@ int main() {
             perror("epoll");
             exit(-1);
         }
-        printf("epollEvent = %d", epollRet);
+        printf("epollEvent: %d\n", epollRet);
 
         for (int i = 0; i < epollRet; ++i) {
             int curFd = epollEvents[i].data.fd;

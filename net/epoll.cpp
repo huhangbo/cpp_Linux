@@ -1,8 +1,8 @@
-#include <stdio.h>
+#include <cstdio>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 #include <sys/epoll.h>
 
 
@@ -32,20 +32,21 @@ int main() {
         exit(-1);
     }
 
-    int epollFd = epoll_create(100);
+    int epollFd = epoll_create(100);   //创建epoll实列
     epoll_event epollEvent = {};
     epollEvent.events = EPOLLIN;
     epollEvent.data.fd = lfd;
+    epoll_ctl(epollFd, EPOLL_CTL_ADD, lfd, &epollEvent);
 
     epoll_event epollEvents[1024];
 
     while (true) {
         int epollRet = epoll_wait(epollFd, epollEvents, 1024, -1);
         if (epollRet == -1) {
-            perror("epoll");
+            perror("epoll_wait");
             exit(-1);
         }
-        printf("epollEvent = %d", epollRet);
+        printf("epollEvent: %d\n", epollRet);
 
         for (int i = 0; i < epollRet; ++i) {
             int curFd = epollEvents[i].data.fd;
@@ -76,7 +77,7 @@ int main() {
                     send(curFd, recvBuf, strlen(recvBuf) + 1, 0);
                 } else if (tmpLen == 0) {
                     printf("client closed ...\n");
-                    epoll_ctl(epollFd, EPOLL_CTL_DEL, curFd, NULL);
+                    epoll_ctl(epollFd, EPOLL_CTL_DEL, curFd, nullptr);
                     close(curFd);
                 }
             }

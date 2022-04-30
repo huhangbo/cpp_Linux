@@ -1,7 +1,7 @@
 #include <arpa/inet.h>
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
-#include <string.h>
+#include <cstring>
 
 
 
@@ -21,7 +21,6 @@ int main() {
         return -1;
     }
     char recvBuf[1024];
-    int i = 0;
     while (true) {
         fgets(recvBuf, sizeof(recvBuf), stdin);
         write(fd, recvBuf, strlen(recvBuf)+1);

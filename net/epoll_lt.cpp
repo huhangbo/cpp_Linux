@@ -37,6 +37,8 @@ int main() {
     epollEvent.events = EPOLLIN;
     epollEvent.data.fd = lfd;
 
+    epoll_ctl(epollFd, EPOLL_CTL_ADD, lfd, &epollEvent);
+
     epoll_event epollEvents[1024];
 
     while (true) {
@@ -45,7 +47,7 @@ int main() {
             perror("epoll");
             exit(-1);
         }
-        printf("epollEvent = %d", epollRet);
+        printf("epollEvent: %d\n", epollRet);
 
         for (int i = 0; i < epollRet; ++i) {
             int curFd = epollEvents[i].data.fd;
