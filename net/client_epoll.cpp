@@ -2,9 +2,6 @@
 #include <cstdio>
 #include <unistd.h>
 #include <cstring>
-
-
-
 int main() {
     int fd = socket(AF_INET, SOCK_STREAM, 0);
 

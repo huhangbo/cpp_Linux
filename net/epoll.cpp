@@ -1,10 +1,9 @@
 #include <cstdio>
-#include <arpa/inet.h>
-#include <unistd.h>
 #include <cstring>
 #include <cstdlib>
+#include <arpa/inet.h>
+#include <unistd.h>
 #include <sys/epoll.h>
-
 
 int main() {
     int lfd = socket(PF_INET, SOCK_STREAM, 0);
@@ -14,7 +13,6 @@ int main() {
     }
     int optVal = 1;
     setsockopt(lfd, SOL_SOCKET, SO_REUSEPORT, &optVal, sizeof(optVal));
-
     sockaddr_in address = {};
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_family = AF_INET;
@@ -25,19 +23,16 @@ int main() {
         perror("bind");
         exit(-1);
     }
-
     ret = listen(lfd, 128);
     if (ret == -1) {
         perror("listen");
         exit(-1);
     }
-
     int epollFd = epoll_create(100);   //创建epoll实列
     epoll_event epollEvent = {};
     epollEvent.events = EPOLLIN;
     epollEvent.data.fd = lfd;
     epoll_ctl(epollFd, EPOLL_CTL_ADD, lfd, &epollEvent);
-
     epoll_event epollEvents[1024];
 
     while (true) {
@@ -47,10 +42,9 @@ int main() {
             exit(-1);
         }
         printf("epollEvent: %d\n", epollRet);
-
         for (int i = 0; i < epollRet; ++i) {
             int curFd = epollEvents[i].data.fd;
-            if (curFd == lfd) {
+            if (curFd == lfd) {     //有新的客户端连接
                 sockaddr_in clientAddress = {};
                 socklen_t len = sizeof(clientAddress);
                 int cfd = accept(lfd, (sockaddr *) &clientAddress, &len);
@@ -62,7 +56,6 @@ int main() {
                 inet_ntop(AF_INET, &clientAddress.sin_addr.s_addr, clientIP, sizeof(clientAddress));
                 unsigned short clientPort = ntohs(clientAddress.sin_port);
                 printf("client IP: %s, client Port: %d\n", clientIP, clientPort);
-
                 epollEvent.data.fd = cfd;
                 epollEvent.events = EPOLLIN;
                 epoll_ctl(epollFd, EPOLL_CTL_ADD, cfd, &epollEvent);
