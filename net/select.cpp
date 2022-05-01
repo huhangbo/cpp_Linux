@@ -4,8 +4,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-
-
 int main() {
     int lfd = socket(PF_INET, SOCK_STREAM, 0);
     if(lfd == -1) {
@@ -14,18 +12,15 @@ int main() {
     }
     int optVal = 1;
     setsockopt(lfd, SOL_SOCKET, SO_REUSEPORT, &optVal, sizeof(optVal));
-
     sockaddr_in address = {};
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_family = AF_INET;
     address.sin_port = htons(9999);
-
     int ret = bind(lfd, (sockaddr*)&address, sizeof(address));
     if(ret == -1) {
         perror("bind");
         exit(-1);
     }
-
     ret = listen(lfd, 128);
     if(ret == -1) {
         perror("listen");
@@ -35,7 +30,6 @@ int main() {
     FD_ZERO(&rdSet);
     FD_SET(lfd, &rdSet);
     int max = lfd;
-
     while (true) {
         tmpSet = rdSet;
         int selectRet = select(max +1, &tmpSet, NULL, NULL, NULL);
